@@ -1,0 +1,50 @@
+module part2(SW, KEY, LEDR);
+  input [2:0] SW, KEY;
+  output [4:0] LEDR;
+
+  wire w;
+  reg out;
+  reg [3:0] y_Q, Y_D;
+  parameter A = 4'b0, B = 4'b1, C = 4'b10, D = 4'b11, E = 4'b100, F = 4'b101, G = 4'b110, H = 4'b111, I = 4'b1000;
+
+  assign w = SW[1];
+
+  always @(w, y_Q)
+  begin:
+    case (y_Q)
+      A:  if(!w) Y_D = B;
+          else Y_D = F;
+      B:  if(!w) Y_D = C;
+          else Y_D = F;
+      C:  if(!w) Y_D = D;
+          else Y_D = F;
+      D:  if(!w) Y_D = E;
+          else Y_D = F;
+      E:  if(!w) Y_D = E;
+          else Y_D = F;
+      F:  if(!w) Y_D = B;
+          else Y_D = G;
+      G:  if(!w) Y_D = B;
+          else Y_D = H;
+      H:  if(!w) Y_D = B;
+          else Y_D = I;
+      I:  if(!w) Y_D = B;
+          else Y_D = I;
+      default: Y_D = 4'bxxxx;
+    endcase
+  end //state_table
+
+  always @(posedge clock)
+  begin:
+    if (!SW[0])
+      y_Q <= A;
+    else
+      y_Q <= Y_D;
+
+    assign out = ((y_Q == E) | (y_Q == I));
+  end //state_FFs
+
+  assign LEDR[4:1] = y_Q[3:0];
+  assign LEDR[9] = out;
+
+endmodule

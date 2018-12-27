@@ -1,0 +1,16 @@
+module part3(SW, KEY, LEDR, CLOCK_50);
+endmodule
+
+module asyn_ff(D, clock, reset, Q);
+  input D, clock, reset;
+  output reg Q;
+
+  always @(posedge clock, negedge reset)
+  begin
+    if (reset == 0)
+      Q <= 1'b0;
+    else
+      Q <= D;
+  end
+  
+endmodule
