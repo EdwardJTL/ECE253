@@ -1,0 +1,99 @@
+
+D:/2nd_Year_Labs/ECE253/lab9/part1/sort.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+_start:
+	/* Use R4 to hold the number of elements */
+	/* Use R5 to hold "swapped" variable */
+	/* Use R6 as for loop counter */
+	/* Use R7 to hold number of address shifts */
+	LDR	R4, =List	/* load num elements */
+   0:	e59f40a0 	ldr	r4, [pc, #160]	; a8 <List+0x2c>
+	MOV	R5, #0	/* initialize swapped variable */
+   4:	e3a05000 	mov	r5, #0
+
+00000008 <LOOP_W>:
+LOOP_W:	MOV	R5, #0		/* reset swapped variable at the start of while loop */
+   8:	e3a05000 	mov	r5, #0
+	MOV	R6, #1		/* initialize counter variable */
+   c:	e3a06001 	mov	r6, #1
+	MOV R7, #4	/* initialize shift value */
+  10:	e3a07004 	mov	r7, #4
+
+00000014 <LOOP_F>:
+LOOP_F:	
+	ADD	R0, R4, R7	/* set R0 to the address of the element, shift address at R4 by value in R7 */
+  14:	e0840007 	add	r0, r4, r7
+	B	SWAP		/* call swap subroutine */
+  18:	ea00000a 	b	48 <SWAP>
+
+0000001c <RETURN>:
+RETURN:	CMP	R0, #1		/* check if return value from subroutine SWAP is 1 (it is unlikely that the input argument R0 was */
+  1c:	e3500001 	cmp	r0, #1
+	MOVEQ	R5, #1		/* if return value is 1, set swapped (R5) to 1 */
+  20:	03a05001 	moveq	r5, #1
+	ADD	R6, R6, #1	/* add one to counter (R6) */
+  24:	e2866001 	add	r6, r6, #1
+	Add R7, R7, #4	/* add 4 to shift */
+  28:	e2877004 	add	r7, r7, #4
+	SUB	R1, R4, #1	/* store num-1 into R1 */
+  2c:	e2441001 	sub	r1, r4, #1
+	SUB	R1, R1, R6	/* num-1-counter */
+  30:	e0411006 	sub	r1, r1, r6
+	CMP R1, #0		/* check if nunm-1-counter == 0 */
+  34:	e3510000 	cmp	r1, #0
+	BNE	LOOP_F		/* if num-1 != counter, keep in for loop */
+  38:	1afffff5 	bne	14 <LOOP_F>
+	CMP	R5, #1		/* see if swapped happened (ie. R5 == 0) */
+  3c:	e3550001 	cmp	r5, #1
+	BEQ	LOOP_W		/* if swapped, keep in while loop */
+  40:	0afffff0 	beq	8 <LOOP_W>
+
+00000044 <END>:
+END:	B END
+  44:	eafffffe 	b	44 <END>
+
+00000048 <SWAP>:
+SWAP:	PUSH	{R10}	/* clears R10 for use */
+  48:	e52da004 	push	{r10}		; (str r10, [sp, #-4]!)
+	LDR	R1, [R0]	/* load the ith element into R1 */
+  4c:	e5901000 	ldr	r1, [r0]
+	LDR	R2, [R0, #4]	/* load the i+1th element into R2 */
+  50:	e5902004 	ldr	r2, [r0, #4]
+	CMP	R1, R2	/* compare ith and i+1th, flag is LS if higher */
+  54:	e1510002 	cmp	r1, r2
+	STRLS	R2, [R0]	/* load the i+1th element into the address of ith element */
+  58:	95802000 	strls	r2, [r0]
+	LDR R10, [R0]	/* load the new(?) ith element into R10 */
+  5c:	e590a000 	ldr	r10, [r0]
+	SUB R10, R10, R1	/* find difference between the new and old value of the ith element*/
+  60:	e04aa001 	sub	r10, r10, r1
+	CMP	R10, #0	/* compare the previously fetched value of ith element with the newly fetched value */
+  64:	e35a0000 	cmp	r10, #0
+	STRNE	R1, [R0, #4]	/* if ith element changed, load ith old value into i+1th address */
+  68:	15801004 	strne	r1, [r0, #4]
+	CMP	R10, #0	/* compare the previously fetched value of ith element with the newly fetched value */
+  6c:	e35a0000 	cmp	r10, #0
+	MOVNE	R0, #1		/* if ith element changed, set return value to 1 */
+  70:	13a00001 	movne	r0, #1
+	POP	{R10}		/* retrievew register value from stack */
+  74:	e49da004 	pop	{r10}		; (ldr r10, [sp], #4)
+	B RETURN		/* return to main program */
+  78:	eaffffe7 	b	1c <RETURN>
+
+0000007c <List>:
+  7c:	0000000a 	.word	0x0000000a
+  80:	00000578 	.word	0x00000578
+  84:	0000002d 	.word	0x0000002d
+  88:	00000017 	.word	0x00000017
+  8c:	00000005 	.word	0x00000005
+  90:	00000003 	.word	0x00000003
+  94:	00000008 	.word	0x00000008
+  98:	00000011 	.word	0x00000011
+  9c:	00000004 	.word	0x00000004
+  a0:	00000014 	.word	0x00000014
+  a4:	00000021 	.word	0x00000021
+  a8:	0000007c 	.word	0x0000007c

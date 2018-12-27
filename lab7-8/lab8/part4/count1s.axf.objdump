@@ -1,0 +1,160 @@
+
+E:/2nd_Year_Labs/ECE253/lab8/part4/count1s.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+/* Program that counts consecutive 1's */
+		.text
+		.global	_start
+_start:
+		LDR	R12, =TEST_NUM	//load the data word into R7
+   0:	e59fc104 	ldr	r12, [pc, #260]	; 10c <TEST_NUM+0x28>
+		MOV	R5, #0			//R5 will hold the result
+   4:	e3a05000 	mov	r5, #0
+		MOV R6, #0
+   8:	e3a06000 	mov	r6, #0
+		MOV R7, #0
+   c:	e3a07000 	mov	r7, #0
+		LDR R8, =0x55555555
+  10:	e59f80f8 	ldr	r8, [pc, #248]	; 110 <TEST_NUM+0x2c>
+		LDR R9, =0xAAAAAAAA
+  14:	e59f90f8 	ldr	r9, [pc, #248]	; 114 <TEST_NUM+0x30>
+
+00000018 <MAIN>:
+MAIN:	LDR R1, [R12]	//Load word into R12
+  18:	e59c1000 	ldr	r1, [r12]
+		CMP R1, #0
+  1c:	e3510000 	cmp	r1, #0
+		BEQ END
+  20:	0a00002e 	beq	e0 <END>
+		BL ONES	//Calls ONES subroutine
+  24:	eb000009 	bl	50 <ONES>
+		CMP R5, R0	//Compare R5 with output R0 from the ONES
+  28:	e1550000 	cmp	r5, r0
+		MOVLT R5, R0	//Update R5 if R5<R0
+  2c:	b1a05000 	movlt	r5, r0
+		BL ZERO	//Calls ZERO Subroutine
+  30:	eb00000e 	bl	70 <ZERO>
+		CMP R6, R0	//Compare R5 with output R0 from ZEROS
+  34:	e1560000 	cmp	r6, r0
+		MOVLT R6, R0	//Update R5 if R5<R0
+  38:	b1a06000 	movlt	r6, r0
+		BL ALTERNATE	//Calls ALTERNATE Subroutine
+  3c:	eb00000f 	bl	80 <ALTERNATE>
+		CMP R7, R0	//Compare R5 with output R0 from ALTERNATE
+  40:	e1570000 	cmp	r7, r0
+		MOVLT R7, R0	//Update R5 if R5<R0
+  44:	b1a07000 	movlt	r7, r0
+		ADD R12, #4
+  48:	e28cc004 	add	r12, r12, #4
+		B MAIN
+  4c:	eafffff1 	b	18 <MAIN>
+
+00000050 <ONES>:
+ONES:	MOV R0, #0	//reset R0 counter
+  50:	e3a00000 	mov	r0, #0
+
+00000054 <LOOP>:
+LOOP: CMP R1, #0
+  54:	e3510000 	cmp	r1, #0
+		BEQ L_END	//stop if R1 is all zero
+  58:	0a000003 	beq	6c <L_END>
+		LSR R2, R1, #1		//perform SHIFT, followed by AND
+  5c:	e1a020a1 	lsr	r2, r1, #1
+		AND	R1, R2, R1
+  60:	e0021001 	and	r1, r2, r1
+		ADD	R0, #1			//count the string lengths so far
+  64:	e2800001 	add	r0, r0, #1
+		B	LOOP
+  68:	eafffff9 	b	54 <LOOP>
+
+0000006c <L_END>:
+L_END:	MOV PC, LR	//end subroutine
+  6c:	e1a0f00e 	mov	pc, lr
+
+00000070 <ZERO>:
+ZERO:	LDR R1, [R12]
+  70:	e59c1000 	ldr	r1, [r12]
+		MVN R1, R1	//bitwise NOT R1
+  74:	e1e01001 	mvn	r1, r1
+		MOV R0, #0	//Reset R0 counter
+  78:	e3a00000 	mov	r0, #0
+		B LOOP	//goes into comparison loop
+  7c:	eafffff4 	b	54 <LOOP>
+
+00000080 <ALTERNATE>:
+ALTERNATE: LDR R1, [R12]
+  80:	e59c1000 	ldr	r1, [r12]
+		MOV R3, R1	//load the word into R3
+  84:	e1a03001 	mov	r3, r1
+		PUSH {R4,R10}	//push R4, R10 into the stack so they can be used in sub
+  88:	e92d0410 	push	{r4, r10}
+		MOV R10, R1	//load the word into R10
+  8c:	e1a0a001 	mov	r10, r1
+		MOV R4, #0	//reset counter 1 R4
+  90:	e3a04000 	mov	r4, #0
+		MOV R0, #0	//reset counter 2 R0
+  94:	e3a00000 	mov	r0, #0
+		EOR R1, R1, R8	//bitwise XOR with 0101
+  98:	e0211008 	eor	r1, r1, r8
+		EOR R10, R10, R9	//bitwise XOR with 1010
+  9c:	e02aa009 	eor	r10, r10, r9
+
+000000a0 <AL_1>:
+AL_1: CMP R1, #0	//perform loop checks on R1
+  a0:	e3510000 	cmp	r1, #0
+		BEQ AL_2	//go to second loop once this check is complete
+  a4:	0a000003 	beq	b8 <AL_2>
+		LSR R2, R1, #1
+  a8:	e1a020a1 	lsr	r2, r1, #1
+		AND R1, R2, R1
+  ac:	e0021001 	and	r1, r2, r1
+		ADD R0, #1	//increment R0 counter
+  b0:	e2800001 	add	r0, r0, #1
+		B AL_1	//loop
+  b4:	eafffff9 	b	a0 <AL_1>
+
+000000b8 <AL_2>:
+AL_2:	CMP R10, #0	//perform loop checks on R10
+  b8:	e35a0000 	cmp	r10, #0
+		BEQ AL_END	//finish subroutine
+  bc:	0a000003 	beq	d0 <AL_END>
+		LSR R2, R10, #1
+  c0:	e1a020aa 	lsr	r2, r10, #1
+		AND R10, R2, R10
+  c4:	e002a00a 	and	r10, r2, r10
+		ADD R4, #1	//increment counter R4
+  c8:	e2844001 	add	r4, r4, #1
+		B AL_2	//loop
+  cc:	eafffff9 	b	b8 <AL_2>
+
+000000d0 <AL_END>:
+AL_END: CMP R0, R4	//compare two scores R0 and R4
+  d0:	e1500004 	cmp	r0, r4
+		MOVLT R0, R4	//move R4 into R0 if R4>R0
+  d4:	b1a00004 	movlt	r0, r4
+		POP {R4, R10}	//restore registers from stack
+  d8:	e8bd0410 	pop	{r4, r10}
+		MOV PC, LR	//end subroutine
+  dc:	e1a0f00e 	mov	pc, lr
+
+000000e0 <END>:
+END:	B	END
+  e0:	eafffffe 	b	e0 <END>
+
+000000e4 <TEST_NUM>:
+  e4:	103fe00f 	.word	0x103fe00f
+  e8:	8df0437b 	.word	0x8df0437b
+  ec:	714cb1b6 	.word	0x714cb1b6
+  f0:	62ebdc64 	.word	0x62ebdc64
+  f4:	1ad344f6 	.word	0x1ad344f6
+  f8:	7518cec0 	.word	0x7518cec0
+  fc:	5a7fe872 	.word	0x5a7fe872
+ 100:	523e22c3 	.word	0x523e22c3
+ 104:	2bd3a7e6 	.word	0x2bd3a7e6
+ 108:	9ca39f7e 	.word	0x9ca39f7e
+ 10c:	000000e4 	.word	0x000000e4
+ 110:	55555555 	.word	0x55555555
+ 114:	aaaaaaaa 	.word	0xaaaaaaaa

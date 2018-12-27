@@ -1,0 +1,27 @@
+
+W:/Monitor_Tutorial/simple_program.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+.include    "address_map_arm.s"
+
+.text                       
+.global     _start          
+_start: 
+        LDR     R1, =LED_BASE  /* Address of red LEDs. */
+   0:	e59f100c 	ldr	r1, [pc, #12]	; 14 <ICCEOIR+0x4>
+        LDR     R2, =SW_BASE    /* Address of switches. */
+   4:	e59f200c 	ldr	r2, [pc, #12]	; 18 <ICCEOIR+0x8>
+
+00000008 <LOOP>:
+LOOP:   
+        LDR     R3, [R2]        /* Read the state of switches. */
+   8:	e5923000 	ldr	r3, [r2]
+        STR     R3, [R1]        /* Display the state on LEDs. */
+   c:	e5813000 	str	r3, [r1]
+        B       LOOP            
+  10:	eafffffc 	b	8 <LOOP>
+  14:	ff200000 	.word	0xff200000
+  18:	ff200040 	.word	0xff200040

@@ -1,0 +1,72 @@
+
+D:/2nd_Year_Labs/ECE253/lab8/part3/count1s.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+/* Program that counts consecutive 1's */
+		.text
+		.global	_start
+_start:
+		LDR	R4, =TEST_NUM	//load the data word into R1
+   0:	e59f406c 	ldr	r4, [pc, #108]	; 74 <TEST_NUM+0x28>
+		MOV	R5, #0			//R5 will hold the result
+   4:	e3a05000 	mov	r5, #0
+
+00000008 <MAIN>:
+MAIN:	LDR R1, [R4]
+   8:	e5941000 	ldr	r1, [r4]
+		ADD R4, #4
+   c:	e2844004 	add	r4, r4, #4
+		CMP R1, #0
+  10:	e3510000 	cmp	r1, #0
+		BEQ END
+  14:	0a00000b 	beq	48 <END>
+		BL ONES
+  18:	eb000002 	bl	28 <ONES>
+		CMP R5, R0
+  1c:	e1550000 	cmp	r5, r0
+		MOVLT R5, R0
+  20:	b1a05000 	movlt	r5, r0
+		B MAIN
+  24:	eafffff7 	b	8 <MAIN>
+
+00000028 <ONES>:
+ONES:	MOV R0, #0
+  28:	e3a00000 	mov	r0, #0
+
+0000002c <LOOP>:
+LOOP: CMP R1, #0
+  2c:	e3510000 	cmp	r1, #0
+		BEQ L_END
+  30:	0a000003 	beq	44 <L_END>
+		LSR R2, R1, #1		//perform SHIFT, followed by AND
+  34:	e1a020a1 	lsr	r2, r1, #1
+		AND	R1, R2, R1
+  38:	e0021001 	and	r1, r2, r1
+		Add	R0, #1			//count the string lengths so far
+  3c:	e2800001 	add	r0, r0, #1
+		B	LOOP
+  40:	eafffff9 	b	2c <LOOP>
+
+00000044 <L_END>:
+L_END:	MOV PC, LR
+  44:	e1a0f00e 	mov	pc, lr
+
+00000048 <END>:
+END:	B	END
+  48:	eafffffe 	b	48 <END>
+
+0000004c <TEST_NUM>:
+  4c:	103fe00f 	.word	0x103fe00f
+  50:	8df0437b 	.word	0x8df0437b
+  54:	714cb1b6 	.word	0x714cb1b6
+  58:	62ebdc64 	.word	0x62ebdc64
+  5c:	1ad344f6 	.word	0x1ad344f6
+  60:	7518cec0 	.word	0x7518cec0
+  64:	5a7fe872 	.word	0x5a7fe872
+  68:	523e22c3 	.word	0x523e22c3
+  6c:	2bd3a7e6 	.word	0x2bd3a7e6
+  70:	9ca39f7e 	.word	0x9ca39f7e
+  74:	0000004c 	.word	0x0000004c

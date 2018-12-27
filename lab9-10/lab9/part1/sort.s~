@@ -1,0 +1,7 @@
+	/* Program that sorts a list of 'words' */
+	.text
+	.global _start
+_start:
+	/* Use R4 to hold the number of elements
+	/* Use R5 to hold "swapped" variable
+	/* Use 

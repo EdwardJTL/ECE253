@@ -1,0 +1,38 @@
+
+W:/lab7/count1s.axf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__cs3_interrupt_vector>:
+/* Program that ocunts consxecutive 1's */
+		.text
+		.global	_start
+_start:
+		LDR	R1, TEST_NUM	//load the data word into R1
+   0:	e59f101c 	ldr	r1, [pc, #28]	; 24 <TEST_NUM>
+		
+		MOV	R0, #0			//R0 will hold the result
+   4:	e3a00000 	mov	r0, #0
+
+00000008 <LOOP>:
+LOOP:	CMP	R1, #0			//loop until the data contains no more 1's
+   8:	e3510000 	cmp	r1, #0
+		BEQ	END
+   c:	0a000003 	beq	20 <END>
+		LSR R2, R1, #1		//perform SHIFT, followed by AND
+  10:	e1a020a1 	lsr	r2, r1, #1
+		AND	R1, R1, R2
+  14:	e0011002 	and	r1, r1, r2
+		Add	R0, #1			//count the string lengths so far
+  18:	e2800001 	add	r0, r0, #1
+		B	LOOP
+  1c:	eafffff9 	b	8 <LOOP>
+
+00000020 <END>:
+		
+END:	B	END
+  20:	eafffffe 	b	20 <END>
+
+00000024 <TEST_NUM>:
+  24:	103fe00f 	.word	0x103fe00f

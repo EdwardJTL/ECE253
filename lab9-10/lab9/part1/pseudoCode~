@@ -1,0 +1,18 @@
+int sort(int* array){		/* function prototype
+    int length = array[0];	/* the first element of the array is the length of the array, grab it and store it
+    int swapped = 1		/* status of whether a swpped ocurred
+    while (swapped = 1){	/* loop continues until no elements are swapped
+    	  swapped = 0		/* reset swap status which will stay 0 if no swap occurs
+    	  for (int i = 1; i < length-1; i++){	  /* loops through every element of the list
+	      /* swap routine
+	      if array[i+1] > array[i]{	/* if the current element is smaller than the next element
+	      int temp = array[i];	/* store the value at a temporary location
+	      array[i] = array[i+1]	/* store i+1 value to the address of element i
+	      array[i+1] = temp		/* restores i value to the address of element i+1
+	      swapped = 1  		/* register the status that a swap has occured
+	      }
+	      /* end of swap routine
+	  }
+
+    }
+}

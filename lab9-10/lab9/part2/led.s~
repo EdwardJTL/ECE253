@@ -1,0 +1,5 @@
+	.text
+	.global _start
+_start:
+	LDR R8, =0xFF200000	// LEDR port address
+	LDR R9, =0xFF200050	// KEY port address
